@@ -1,5 +1,5 @@
 {
-  "name": "workflow",
+  "name": "local-agent-chat",
   "version": "1.0.0",
   "private": true,
   "scripts": {
