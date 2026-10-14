@@ -4,10 +4,21 @@ from pathlib import Path
 import httpx
 from dotenv import dotenv_values
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_methods=["POST"],
+    allow_headers=["Content-Type"],
+)
 
 ENV = dotenv_values(Path(__file__).resolve().parents[2] / ".env")
 API_URL = ENV.get("API_URL")
