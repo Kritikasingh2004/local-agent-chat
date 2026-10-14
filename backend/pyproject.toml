@@ -5,6 +5,7 @@ description = "Local LLM chatbot using FastAPI and Ollama"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "python-dotenv",
     "fastapi[standard]",
     "httpx",
 ]

@@ -53,6 +53,7 @@ source = { editable = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "httpx" },
+    { name = "python-dotenv" },
 ]
 
 [package.dev-dependencies]
@@ -64,6 +65,7 @@ dev = [
 requires-dist = [
     { name = "fastapi", extras = ["standard"] },
     { name = "httpx" },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata.requires-dev]

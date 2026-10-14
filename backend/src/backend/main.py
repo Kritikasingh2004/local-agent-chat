@@ -1,11 +1,15 @@
+from pathlib import Path
+
 import httpx
+from dotenv import dotenv_values
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL = "qwen3.5:4b"
+ENV = dotenv_values(Path(__file__).resolve().parents[2] / ".env")
+API_URL = ENV.get("API_URL", "http://localhost:11434/api/chat")
+MODEL = ENV.get("MODEL", "gemma2:2b")
 
 
 class ChatRequest(BaseModel):
@@ -26,7 +30,7 @@ async def chat(request: ChatRequest):
     try:
         async with httpx.AsyncClient(timeout=180.0) as client:
             result = await client.post(
-                OLLAMA_URL,
+                API_URL,
                 json={
                     "model": MODEL,
                     "messages": [
