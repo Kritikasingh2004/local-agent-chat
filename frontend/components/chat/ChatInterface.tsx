@@ -6,7 +6,6 @@ import { Bot, Sparkles } from 'lucide-react';
 import { streamPrompt } from '@/lib/api';
 import type { Message } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 
@@ -74,7 +73,7 @@ const ChatInterface = () => {
           <div>
             <h1 className="text-xl font-bold">Local AI</h1>
             <p className="text-sm font-medium text-foreground/70">
-              Powered by You
+              Powered by THE ENTITY
             </p>
           </div>
         </div>
@@ -121,19 +120,17 @@ const ChatInterface = () => {
             ) : (
               <div className="flex-1">
                 {messages.map((message) => (
-                  <ChatMessage key={message.id} message={message} />
+                  <ChatMessage
+                    key={message.id}
+                    message={message}
+                    isThinking={
+                      isLoading &&
+                      message.role === 'assistant' &&
+                      message.id === messages[messages.length - 1]?.id &&
+                      !message.content
+                    }
+                  />
                 ))}
-
-                {isLoading && (
-                  <div className="my-3 space-y-3 border-2 border-border bg-secondary-background p-4 shadow-shadow">
-                    <p className="text-sm font-bold uppercase tracking-wide">
-                      Qwen is generating...
-                    </p>
-                    <Skeleton className="h-3 w-3/4 bg-secondary-background" />
-                    <Skeleton className="h-3 w-full bg-secondary-background" />
-                    <Skeleton className="h-3 w-1/2 bg-secondary-background" />
-                  </div>
-                )}
 
                 <div ref={bottomRef} />
               </div>

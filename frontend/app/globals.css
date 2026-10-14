@@ -50,11 +50,9 @@
 }
 
 :root {
-  --background: hsl(236, 100%, 80%);
   --secondary-background: oklch(100% 0 0);
   --main: hsl(49, 100%, 49%);
   --ring: oklch(0% 0 0);
-  --foreground: oklch(0% 0 0);
   --main-foreground: oklch(0% 0 0);
   --border: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
@@ -65,6 +63,8 @@
   --chart-4: #00D696;
   --chart-5: #0099FF;
   --chart-active-dot: #000;
+  --background: hsl(236, 100%, 80%);
+  --foreground: oklch(0% 0 0);
 }
 
 @layer base {
@@ -82,8 +82,8 @@
   }
 }
   body, .scrollbar {
-    --sb-track-color: var(--background);
-    --sb-thumb-color: var(--border);
+    --sb-track-color: #ffffff;
+    --sb-thumb-color: #000000;
 }
   .scrollbar::-webkit-scrollbar {
     width: 16px;
