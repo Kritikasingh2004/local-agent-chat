@@ -19,7 +19,7 @@ const ChatMessage = ({ message, isThinking = false }: ChatMessageProps) => {
             : 'rounded-br-base bg-main text-main-foreground'
         }`}
       >
-        <div className="mb-3 flex items-center justify-between gap-4 border-b-2 border-border pb-2 text-[0.68rem] font-bold uppercase tracking-[0.18em]">
+        <div className="mb-3 flex items-center justify-between gap-4 border-b-2 border-border pb-2  font-extrabold uppercase">
           {isUser ? 'You' : 'THE ENTITY'}
         </div>
 
@@ -31,8 +31,9 @@ const ChatMessage = ({ message, isThinking = false }: ChatMessageProps) => {
             <span className="font-bold uppercase tracking-wide">
               THE ENTITY IS THINKING...
             </span>
-          ) : (
-            message.content
+          ) : (<span className="font-bold">
+            {message.content}
+            </span>
           )}
         </div>
       </div>
