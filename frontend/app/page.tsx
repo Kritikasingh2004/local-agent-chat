@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
+import ChatInterface from '@/components/chat/ChatInterface';
 
 export default function Home() {
-  return (
-    <div><Button>HI</Button></div>
-  );
+  return <ChatInterface />;
 }
