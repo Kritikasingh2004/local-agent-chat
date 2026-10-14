@@ -1,15 +1,17 @@
+import json
 from pathlib import Path
 
 import httpx
 from dotenv import dotenv_values
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 app = FastAPI()
 
 ENV = dotenv_values(Path(__file__).resolve().parents[2] / ".env")
-API_URL = ENV.get("API_URL", "http://localhost:11434/api/chat")
-MODEL = ENV.get("MODEL", "gemma2:2b")
+API_URL = ENV.get("API_URL")
+MODEL = ENV.get("MODEL")
 
 
 class ChatRequest(BaseModel):
@@ -25,38 +27,73 @@ def read_root():
     return {"Message": "Local LLM API is running gng"}
 
 
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat")
 async def chat(request: ChatRequest):
-    try:
-        async with httpx.AsyncClient(timeout=180.0) as client:
-            result = await client.post(
-                API_URL,
-                json={
-                    "model": MODEL,
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": request.prompt,
-                        }
-                    ],
-                    "think": False,
-                    "stream": False,
-                },
-            )
-
-            result.raise_for_status()
-            data = result.json()
-
-        return ChatResponse(response=data["message"]["content"])
-
-    except httpx.HTTPStatusError as exc:
+    if not API_URL or not MODEL:
         raise HTTPException(
-            status_code=502,
-            detail=f"Ollama returned an error: {exc.response.text}",
-        ) from exc
+            status_code=500,
+            detail="API_URL or MODEL is missing from .env",
+        )
 
-    except httpx.RequestError as exc:
-        raise HTTPException(
-            status_code=503,
-            detail="Cannot connect to Ollama. Is Ollama running?",
-        ) from exc
+    async def generate():
+        try:
+            async with httpx.AsyncClient(timeout=180.0) as client:
+                async with client.stream(
+                    "POST",
+                    API_URL,
+                    json={
+                        "model": MODEL,
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": request.prompt,
+                            }
+                        ],
+                        "think": False,
+                        "stream": True,
+                    },
+                ) as result:
+                    result.raise_for_status()
+
+                    async for line in result.aiter_lines():
+                        if not line:
+                            continue
+
+                        data = json.loads(line)
+
+                        # Send the generated text immediately.
+                        content = data.get("message", {}).get("content", "")
+
+                        if content:
+                            yield (
+                                f"data: {json.dumps({'token': content})}\n\n"
+                            )
+
+                        # Tell the frontend that generation is complete.
+                        if data.get("done", False):
+                            yield 'data: {"done": true}\n\n'
+                            return
+
+        except httpx.HTTPStatusError as exc:
+            error = {
+                "error": f"Ollama returned an error: {exc.response.text}"
+            }
+            yield f"data: {json.dumps(error)}\n\n"
+
+        except (httpx.RequestError, httpx.TimeoutException) as exc:
+            error = {
+                "error": "Cannot connect to Ollama. Is Ollama running?"
+            }
+            yield f"data: {json.dumps(error)}\n\n"
+
+        except json.JSONDecodeError:
+            yield 'data: {"error": "Invalid response from Ollama"}\n\n'
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
