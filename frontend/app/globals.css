@@ -68,7 +68,12 @@
 }
 
 @layer base {
+  * {
+    border-color: var(--border);
+  }
+
   body {
+    background: var(--background);
     font-weight: var(--font-weight-base);
     color: var(--foreground);
   }
@@ -77,8 +82,8 @@
   }
 }
   body, .scrollbar {
-    --sb-track-color: #ffffff;
-    --sb-thumb-color: #000000;
+    --sb-track-color: var(--background);
+    --sb-thumb-color: var(--border);
 }
   .scrollbar::-webkit-scrollbar {
     width: 16px;

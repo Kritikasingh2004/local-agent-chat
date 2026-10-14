@@ -66,16 +66,20 @@ const ChatInterface = () => {
 
   return (
     <main className="flex h-dvh flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b-2 px-6 py-4">
+      <header className="flex shrink-0 items-center justify-between border-b-2 bg-secondary-background px-4 py-4 shadow-shadow sm:px-6">
         <div className="flex items-center gap-3">
-          <Bot className="size-7" />
+          <div className="border-2 border-border bg-main p-2 shadow-shadow">
+            <Bot className="size-6" strokeWidth={2.5} />
+          </div>
           <div>
             <h1 className="text-xl font-bold">Local AI</h1>
-            <p className="text-sm text-muted-foreground">Powered by Qwen 3.5</p>
+            <p className="text-sm font-medium text-foreground/70">
+              Powered by You
+            </p>
           </div>
         </div>
 
-        <span className="hidden text-sm font-medium sm:block">
+        <span className="hidden border-2 border-border bg-main px-3 py-1 text-xs font-bold uppercase tracking-wide shadow-shadow sm:block">
           Running locally
         </span>
       </header>
@@ -85,30 +89,33 @@ const ChatInterface = () => {
           <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col px-4 py-6">
             {messages.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-4 py-12 text-center">
-                <Sparkles className="size-12" />
+                <div className="border-2 border-border bg-main p-4 shadow-shadow">
+                  <Sparkles className="size-10" strokeWidth={2.5} />
+                </div>
 
                 <h2 className="text-3xl font-bold sm:text-4xl">
                   What can I help with?
                 </h2>
 
-                <p className="max-w-md text-muted-foreground">
+                <p className="max-w-md font-medium text-foreground/75">
                   Ask a question, explore an idea, or get help with code using
                   your local Qwen model.
                 </p>
 
                 <div className="mt-4 grid w-full max-w-lg gap-3 sm:grid-cols-2">
-                  {['Explain a complex topic', 'Help me debug some code'].map(
-                    (suggestion) => (
+                  {[
+                    'Explain a complex topic',
+                    'Help me debug some code',
+                  ].map((label, index) => (
                       <button
-                        key={suggestion}
+                        key={label}
                         type="button"
-                        onClick={() => setPrompt(suggestion)}
-                        className="border-2 border-border bg-secondary-background p-4 text-left font-medium shadow-shadow"
+                        onClick={() => setPrompt(label)}
+                        className={`border-2 border-border p-4 text-left font-bold shadow-shadow transition-transform hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${index === 0 ? 'bg-secondary-background' : 'bg-main'}`}
                       >
-                        {suggestion}
+                        {label}
                       </button>
-                    ),
-                  )}
+                    ))}
                 </div>
               </div>
             ) : (
@@ -118,13 +125,13 @@ const ChatInterface = () => {
                 ))}
 
                 {isLoading && (
-                  <div className="space-y-3 py-4">
-                    <p className="text-sm font-semibold">
+                  <div className="my-3 space-y-3 border-2 border-border bg-secondary-background p-4 shadow-shadow">
+                    <p className="text-sm font-bold uppercase tracking-wide">
                       Qwen is generating...
                     </p>
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-3 w-3/4 bg-secondary-background" />
+                    <Skeleton className="h-3 w-full bg-secondary-background" />
+                    <Skeleton className="h-3 w-1/2 bg-secondary-background" />
                   </div>
                 )}
 
@@ -134,7 +141,7 @@ const ChatInterface = () => {
           </div>
         </div>
 
-        <footer className="shrink-0 border-t-2 px-4 py-4">
+        <footer className="shrink-0 border-t-2 bg-secondary-background px-4 py-4">
           <div className="mx-auto max-w-3xl space-y-3">
             {error && (
               <Alert variant="destructive">

@@ -3,7 +3,6 @@
 import type { KeyboardEvent } from 'react';
 import { ArrowUp, LoaderCircle } from 'lucide-react';
 import { Textarea } from '../ui/textarea';
-import { event } from 'next/dist/build/output/log';
 import { Button } from '../ui/button';
 
 type ChatInputProps = {
