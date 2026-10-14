@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Bot, Sparkles } from 'lucide-react';
 
-import { sendPrompt } from '@/lib/api';
+import { streamPrompt } from '@/lib/api';
 import type { Message } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -37,17 +37,26 @@ const ChatInterface = () => {
     setError(null);
     setIsLoading(true);
 
-    try {
-      const response = await sendPrompt(text);
+    const assistantMessageId = crypto.randomUUID();
+    setMessages((previous) => [
+      ...previous,
+      {
+        id: assistantMessageId,
+        role: 'assistant',
+        content: '',
+      },
+    ]);
 
-      setMessages((previous) => [
-        ...previous,
-        {
-          id: crypto.randomUUID(),
-          role: 'assistant',
-          content: response,
-        },
-      ]);
+    try {
+      for await (const token of streamPrompt(text)) {
+        setMessages((previous) =>
+          previous.map((message) =>
+            message.id === assistantMessageId
+              ? { ...message, content: message.content + token }
+              : message,
+          ),
+        );
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
     } finally {
