@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { Check, Copy } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -42,6 +44,7 @@ const CodeBlock = ({ code, language }: CodeBlockProps) => {
           {copied ? 'COPIED!' : 'COPY'}
         </Button>
       </div>
+
       <pre className="markdown-code-content">
         <code>{code}</code>
       </pre>
@@ -51,7 +54,8 @@ const CodeBlock = ({ code, language }: CodeBlockProps) => {
 
 const MarkdownContent = ({ content }: MarkdownContentProps) => (
   <ReactMarkdown
-    remarkPlugins={[remarkGfm]}
+    remarkPlugins={[remarkGfm, remarkMath]}
+    rehypePlugins={[rehypeKatex]}
     components={{
       pre: ({ children }) => <>{children}</>,
       code: ({ className, children }) => {
